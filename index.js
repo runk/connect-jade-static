@@ -3,7 +3,6 @@ fs = require('fs');
 jade = require('jade');
 
 module.exports = function(opts) {
-  var fs, jade, path;
 
   if (!opts.baseDir) {
     throw new Error('baseDir should be set');
