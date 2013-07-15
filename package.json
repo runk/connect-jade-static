@@ -1,0 +1,27 @@
+{
+  "name": "connect-jade-static",
+  "version": "0.0.1",
+  "description": "Connect (expressjs) middleware for serving html files from jade template",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/runk/connect-jade-static.git"
+  },
+  "keywords": [
+    "connect",
+    "jade",
+    "html",
+    "static",
+    "middleware",
+    "express",
+    "expressjs"
+  ],
+  "author": "Dmitry Shirokov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/runk/connect-jade-static/issues"
+  }
+}
