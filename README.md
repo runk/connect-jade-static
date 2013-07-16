@@ -1,7 +1,7 @@
-connect-jade-static
+connect-jade-static [![Build Status](https://travis-ci.org/runk/connect-jade-static.png)](https://travis-ci.org/runk/connect-jade-static)
 ===================
 
-Connect (ExpressJS) middleware for serving html files from jade templates
+Connect (ExpressJS) middleware for serving jade files as static html
 
 ## Installation
 
@@ -9,6 +9,14 @@ Connect (ExpressJS) middleware for serving html files from jade templates
 
 
 ## Usage
+
+Assume the following structure of your project:
+
+    /views
+      /partials
+        /file.jade
+
+Let's make jade files from `/views/partials` web accessable:
 
     var jadeStatic = require('connect-jade-static');
 
@@ -20,3 +28,6 @@ Connect (ExpressJS) middleware for serving html files from jade templates
         jade: { pretty: true }
       });
     });
+
+Now, if you start your web server and request `/views/partials/file.html` in browser you
+should be able see the compiled jade template.

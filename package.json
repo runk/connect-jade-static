@@ -1,10 +1,10 @@
 {
   "name": "connect-jade-static",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Connect (expressjs) middleware for serving html files from jade template",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -R spec --recursive"
   },
   "repository": {
     "type": "git",
@@ -17,8 +17,13 @@
     "static",
     "middleware",
     "express",
-    "expressjs"
+    "expressjs",
+    "compile"
   ],
+  "devDependencies": {
+    "mocha": ">=1.10.0",
+    "jade": ">=0.32.0"
+  },
   "author": "Dmitry Shirokov <deadrunk@gmail.com>",
   "license": "MIT",
   "bugs": {
