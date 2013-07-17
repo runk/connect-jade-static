@@ -31,3 +31,7 @@ Let's make jade files from `/views/partials` web accessable:
 
 Now, if you start your web server and request `/views/partials/file.html` in browser you
 should be able see the compiled jade template.
+
+-------------
+
+by [http://adslot.com](http://adslot.com)
