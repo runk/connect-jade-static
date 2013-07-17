@@ -1,4 +1,4 @@
-connect-jade-static [![Build Status](https://travis-ci.org/runk/connect-jade-static.png)](https://travis-ci.org/runk/connect-jade-static)
+connect-jade-static [![Build Status](https://api.travis-ci.org/runk/connect-jade-static.png)](https://travis-ci.org/runk/connect-jade-static)
 ===================
 
 Connect (ExpressJS) middleware for serving jade files as static html
