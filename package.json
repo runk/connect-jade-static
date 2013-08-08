@@ -20,9 +20,11 @@
     "expressjs",
     "compile"
   ],
+  "dependencies": {
+    "jade": "~0.34.1"
+  },
   "devDependencies": {
-    "mocha": ">=1.10.0",
-    "jade": ">=0.32.0"
+    "mocha": ">=1.10.0"
   },
   "author": "Dmitry Shirokov <deadrunk@gmail.com>",
   "license": "MIT",
