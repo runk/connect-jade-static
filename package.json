@@ -1,6 +1,6 @@
 {
   "name": "connect-jade-static",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Connect (expressjs) middleware for serving html files from jade template",
   "main": "index.js",
   "scripts": {
@@ -21,10 +21,10 @@
     "compile"
   ],
   "dependencies": {
-    "jade": "~0.34.1"
+    "jade": "*"
   },
   "devDependencies": {
-    "mocha": ">=1.10.0"
+    "mocha": ">=1.12.0"
   },
   "author": "Dmitry Shirokov <deadrunk@gmail.com>",
   "license": "MIT",
