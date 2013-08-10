@@ -26,14 +26,16 @@ module.exports = function(opts) {
       return next(new Error('Invalid path'));
 
 
-    fs.exists(filepath, function(exists) {
+    fs.exists(filepath, function isExists(exists) {
       if (!exists)
         return next();
 
-      jade.renderFile(filepath, opts.jade, function(err, html) {
+      jade.renderFile(filepath, opts.jade, function renderFile(err, html) {
         if (err)
           return next(err);
 
+        res.setHeader('Content-Length', Buffer.byteLength(html));
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
         return res.end(html);
       });
 

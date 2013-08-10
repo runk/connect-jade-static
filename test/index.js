@@ -19,14 +19,24 @@ describe('connect-jade-static', function() {
   it('should serve jade file', function(done) {
     var mw = cjs({ baseUrl: '/views', baseDir: path.join(__dirname, 'views') });
 
+    var headers = {};
     var req = { originalUrl: '/views/tpl.html' };
-    var res = { end: function(html) {
-      // otherwise jade tries to catch this error :/
-      process.nextTick(function() {
-        assert.equal(html, '<h1>Hello</h1><ul><li>aaa</li><li>bbb</li><li>ccc</li></ul>');
-        done();
-      });
-    }};
+    var res = {
+      end: function(html) {
+        // otherwise jade tries to catch this error :/
+        process.nextTick(function() {
+          assert.equal(html, '<h1>Hello</h1><ul><li>aaa</li><li>bbb</li><li>ccc</li></ul>');
+          assert.deepEqual(headers, {
+            'Content-Length': 59,
+            'Content-Type': 'text/html; charset=utf-8'
+          });
+          done();
+        });
+      },
+      setHeader: function(k, v) {
+        headers[k] = v;
+      }
+    };
     var next = function(err) {
       throw new Error('Code shouldn\'t reach here');
     };
@@ -37,20 +47,30 @@ describe('connect-jade-static', function() {
   it('should support jade options', function(done) {
     var mw = cjs({ baseUrl: '/views', baseDir: path.join(__dirname, 'views'), jade: { pretty: true } });
 
+    var headers = {};
     var req = { originalUrl: '/views/tpl.html' };
-    var res = { end: function(html) {
-      // otherwise jade tries to catch this error :/
-      process.nextTick(function() {
-        assert.equal(html,
-          '\n<h1>Hello</h1>\n' +
-          '<ul>\n' +
-          '  <li>aaa</li>\n' +
-          '  <li>bbb</li>\n' +
-          '  <li>ccc</li>\n' +
-          '</ul>');
-        done();
-      });
-    }};
+    var res = {
+      end: function(html) {
+        // otherwise jade tries to catch this error :/
+        process.nextTick(function() {
+          assert.equal(html,
+            '\n<h1>Hello</h1>\n' +
+            '<ul>\n' +
+            '  <li>aaa</li>\n' +
+            '  <li>bbb</li>\n' +
+            '  <li>ccc</li>\n' +
+            '</ul>');
+          assert.deepEqual(headers, {
+            'Content-Length': 71,
+            'Content-Type': 'text/html; charset=utf-8'
+          });
+          done();
+        });
+      },
+      setHeader: function(k, v) {
+        headers[k] = v;
+      }
+    };
     var next = function(err) {
       throw new Error('Code shouldn\'t reach here');
     };
