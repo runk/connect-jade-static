@@ -3,6 +3,9 @@
   "version": "0.1.1",
   "description": "Connect (expressjs) middleware for serving html files from jade template",
   "main": "index.js",
+  "engines": {
+    "node": ">=0.10.15"
+  },
   "scripts": {
     "test": "mocha -R spec --recursive"
   },

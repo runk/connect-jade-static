@@ -20,7 +20,7 @@ describe('connect-jade-static', function() {
     var mw = cjs({ baseUrl: '/views', baseDir: path.join(__dirname, 'views') });
 
     var req = { originalUrl: '/views/tpl.html' };
-    var res = { send: function(html) {
+    var res = { end: function(html) {
       // otherwise jade tries to catch this error :/
       process.nextTick(function() {
         assert.equal(html, '<h1>Hello</h1><ul><li>aaa</li><li>bbb</li><li>ccc</li></ul>');
@@ -38,7 +38,7 @@ describe('connect-jade-static', function() {
     var mw = cjs({ baseUrl: '/views', baseDir: path.join(__dirname, 'views'), jade: { pretty: true } });
 
     var req = { originalUrl: '/views/tpl.html' };
-    var res = { send: function(html) {
+    var res = { end: function(html) {
       // otherwise jade tries to catch this error :/
       process.nextTick(function() {
         assert.equal(html,
@@ -62,7 +62,7 @@ describe('connect-jade-static', function() {
     var mw = cjs({ baseUrl: '/views', baseDir: path.join(__dirname, 'views') });
 
     var req = { originalUrl: '/views/blah.html' };
-    var res = { send: function(html) {
+    var res = { end: function(html) {
       throw new Error('Code shouldn\'t reach here');
     }};
 
@@ -73,7 +73,7 @@ describe('connect-jade-static', function() {
     var mw = cjs({ baseUrl: '/views', baseDir: path.join(__dirname, 'views') });
 
     var req = { originalUrl: '/views/tpl_err.html' };
-    var res = { send: function(html) {
+    var res = { end: function(html) {
       throw new Error('Code shouldn\'t reach here');
     }};
     var next = function(err) {

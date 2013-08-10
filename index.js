@@ -34,7 +34,7 @@ module.exports = function(opts) {
         if (err)
           return next(err);
 
-        return res.send(html);
+        return res.end(html);
       });
 
     });
