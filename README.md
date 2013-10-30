@@ -26,7 +26,7 @@ Let's make jade files from `/views/partials` web accessable:
         baseDir: path.join(__dirname, '/views/partials'),
         baseUrl: '/partials',
         jade: { pretty: true }
-      });
+      }));
     });
 
 Now, if you start your web server and request `/views/partials/file.html` in browser you
