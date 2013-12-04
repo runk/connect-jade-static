@@ -18,13 +18,11 @@ module.exports = function(opts) {
 
     if (req.originalUrl.indexOf(opts.baseUrl) !== 0)
       return next();
-
-    url = req.originalUrl.replace(/html$/, 'jade').replace(opts.baseUrl, '');
+    url = req.originalUrl.replace(/\?.+$/, '').replace(/html$/, 'jade').replace(opts.baseUrl, '');
     filepath = path.join(opts.baseDir, url);
 
     if (filepath.indexOf(opts.baseDir) !== 0)
       return next(new Error('Invalid path'));
-
 
     fs.exists(filepath, function isExists(exists) {
       if (!exists)

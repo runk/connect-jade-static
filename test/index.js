@@ -44,6 +44,34 @@ describe('connect-jade-static', function() {
     mw(req, res, next);
   });
 
+  it('should strip url params', function(done) {
+      var mw = cjs({ baseUrl: '/views', baseDir: path.join(__dirname, 'views') });
+
+      var headers = {};
+      var req = { originalUrl: '/views/tpl.html?version=1' };
+      var res = {
+          end: function(html) {
+              // otherwise jade tries to catch this error :/
+              process.nextTick(function() {
+                  assert.equal(html, '<h1>Hello</h1><ul><li>aaa</li><li>bbb</li><li>ccc</li></ul>');
+                  assert.deepEqual(headers, {
+                      'Content-Length': 59,
+                      'Content-Type': 'text/html; charset=utf-8'
+                  });
+                  done();
+              });
+          },
+          setHeader: function(k, v) {
+              headers[k] = v;
+          }
+      };
+      var next = function(err) {
+          throw new Error('Code shouldn\'t reach here');
+      };
+
+      mw(req, res, next);
+  });
+
   it('should support jade options', function(done) {
     var mw = cjs({ baseUrl: '/views', baseDir: path.join(__dirname, 'views'), jade: { pretty: true } });
 
