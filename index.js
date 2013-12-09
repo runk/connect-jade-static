@@ -1,6 +1,7 @@
-path = require('path');
-fs = require('fs');
-jade = require('jade');
+var path = require('path'),
+  fs = require('fs'),
+  jade = require('jade'),
+  url = require('url');
 
 module.exports = function(opts) {
 
@@ -14,12 +15,11 @@ module.exports = function(opts) {
 
 
   return function(req, res, next) {
-    var filepath, url;
 
     if (req.originalUrl.indexOf(opts.baseUrl) !== 0)
       return next();
-    url = req.originalUrl.replace(/\?.+$/, '').replace(/html$/, 'jade').replace(opts.baseUrl, '');
-    filepath = path.join(opts.baseDir, url);
+
+    var filepath = module.exports.getTplPath(req, opts)
 
     if (filepath.indexOf(opts.baseDir) !== 0)
       return next(new Error('Invalid path'));
@@ -40,4 +40,12 @@ module.exports = function(opts) {
     });
   };
 
+};
+
+
+module.exports.getTplPath = function(req, opts) {
+  var parsed = url.parse(req.originalUrl);
+  var urlpath = parsed.pathname.replace(/html$/, 'jade').replace(opts.baseUrl, '');
+
+  return path.join(opts.baseDir, urlpath);
 };
