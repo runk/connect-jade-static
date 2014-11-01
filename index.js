@@ -19,7 +19,7 @@ module.exports = function(opts) {
     if (req.originalUrl.indexOf(opts.baseUrl) !== 0)
       return next();
 
-    var filepath = module.exports.getTplPath(req, opts)
+    var filepath = module.exports.getTplPath(req, opts);
 
     if (filepath.indexOf(opts.baseDir) !== 0)
       return next(new Error('Invalid path'));
@@ -28,15 +28,21 @@ module.exports = function(opts) {
       if (!exists)
         return next();
 
-      jade.renderFile(filepath, opts.jade, function renderFile(err, html) {
+      fs.stat(filepath, function(err, stats) {
         if (err)
           return next(err);
+        if (!stats.isFile())
+          return next();
 
-        res.setHeader('Content-Length', Buffer.byteLength(html));
-        res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        return res.end(html);
+        jade.renderFile(filepath, opts.jade, function renderFile(err, html) {
+          if (err)
+            return next(err);
+
+          res.setHeader('Content-Length', Buffer.byteLength(html));
+          res.setHeader('Content-Type', 'text/html; charset=utf-8');
+          return res.end(html);
+        });
       });
-
     });
   };
 
