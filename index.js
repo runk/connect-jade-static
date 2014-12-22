@@ -51,7 +51,7 @@ module.exports = function(opts) {
 
 module.exports.getTplPath = function(req, opts) {
   var parsed = url.parse(req.originalUrl);
-  var urlpath = parsed.pathname.replace(/html$/, 'jade').replace(opts.baseUrl, '');
+  var urlpath = parsed.pathname.slice(0, -'html'.length).concat('jade').replace(opts.baseUrl, '');
 
   return path.join(opts.baseDir, urlpath);
 };

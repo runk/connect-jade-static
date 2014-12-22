@@ -18,6 +18,8 @@ Assume the following structure of your project:
 
 Let's make jade files from `/views/partials` web accessable:
 
+#### Express prior to 4.0
+
     var jadeStatic = require('connect-jade-static');
 
     app = express();
@@ -28,6 +30,18 @@ Let's make jade files from `/views/partials` web accessable:
         jade: { pretty: true }
       }));
     });
+    
+#### Express 4.0
+
+
+    var jadeStatic = require('connect-jade-static');
+
+    app = express();
+    app.use(jadeStatic({
+      baseDir: path.join(__dirname, '/views/partials'),
+      baseUrl: '/partials',
+      jade: { pretty: true }
+    }));
 
 Now, if you start your web server and request `/views/partials/file.html` in browser you
 should be able see the compiled jade template.
