@@ -13,6 +13,7 @@ module.exports = function(opts) {
 
   opts.jade = opts.jade || {};
 
+  opts.ext = opts.ext || ['.jade'];
 
   return function(req, res, next) {
 
@@ -20,6 +21,10 @@ module.exports = function(opts) {
       return next();
 
     var filepath = module.exports.getTplPath(req, opts);
+
+    // Handle only .jade files
+    if (opts.ext.indexOf(path.extname(filepath)) === -1)
+      return next();
 
     if (filepath.indexOf(opts.baseDir) !== 0)
       return next(new Error('Invalid path'));
