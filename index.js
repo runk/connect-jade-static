@@ -1,7 +1,8 @@
 var path = require('path'),
   fs = require('fs'),
   jade = require('jade'),
-  url = require('url');
+  url = require('url'),
+  assert = require('assert');
 
 module.exports = function(opts) {
 
@@ -22,31 +23,26 @@ module.exports = function(opts) {
 
     var filepath = module.exports.getTplPath(req, opts);
 
-    // Handle only .jade files
-    if (opts.ext.indexOf(path.extname(filepath)) === -1)
-      return next();
+    if (!filepath)
+      return res.send(404)
 
     if (filepath.indexOf(opts.baseDir) !== 0)
-      return next(new Error('Invalid path'));
+      return res.send(403);
 
-    fs.exists(filepath, function isExists(exists) {
-      if (!exists)
+    fs.stat(filepath, function(err, stats) {
+      if (err)
+        return next(err);
+
+      if (!stats.isFile())
         return next();
 
-      fs.stat(filepath, function(err, stats) {
+      jade.renderFile(filepath, opts.jade, function renderFile(err, html) {
         if (err)
           return next(err);
-        if (!stats.isFile())
-          return next();
 
-        jade.renderFile(filepath, opts.jade, function renderFile(err, html) {
-          if (err)
-            return next(err);
-
-          res.setHeader('Content-Length', Buffer.byteLength(html));
-          res.setHeader('Content-Type', 'text/html; charset=utf-8');
-          return res.end(html);
-        });
+        res.setHeader('Content-Length', Buffer.byteLength(html));
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        return res.end(html);
       });
     });
   };
@@ -55,8 +51,23 @@ module.exports = function(opts) {
 
 
 module.exports.getTplPath = function(req, opts) {
-  var parsed = url.parse(req.originalUrl);
-  var urlpath = parsed.pathname.slice(0, -'html'.length).concat('jade').replace(opts.baseUrl, '');
+  assert(opts.ext && Array.isArray(opts.ext), 'opts.ext should be provided and be an array');
+  assert(opts.baseDir, 'opts.baseDir should be provided');
 
-  return path.join(opts.baseDir, urlpath);
+  var parsed = url.parse(req.originalUrl);
+  var pathname = parsed.pathname.replace(opts.baseUrl, '');
+
+  for (var i = 0; i < opts.ext.length; i++) {
+    var ext = opts.ext[i];
+    var filepath = path.join(opts.baseDir, pathname.replace(/\.html$/, ext));
+
+    // make sure that regexp replace worked from line above
+    if (path.extname(filepath) != ext)
+      continue;
+
+    // make sure that file exists
+    if (fs.existsSync(filepath))
+      return filepath;
+  };
+  return null;
 };

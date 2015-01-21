@@ -2,7 +2,12 @@ var assert = require('assert'),
   path = require('path'),
   cjs = require('../index');
 
+
 describe('connect-jade-static', function() {
+
+  var next = function(err) {
+    throw new Error('Code shouldn\'t reach here');
+  };
 
   describe('middleware()', function() {
 
@@ -40,9 +45,6 @@ describe('connect-jade-static', function() {
           headers[k] = v;
         }
       };
-      var next = function(err) {
-        throw new Error('Code shouldn\'t reach here');
-      };
 
       mw(req, res, next);
     });
@@ -73,9 +75,6 @@ describe('connect-jade-static', function() {
           headers[k] = v;
         }
       };
-      var next = function(err) {
-        throw new Error('Code shouldn\'t reach here');
-      };
 
       mw(req, res, next);
     });
@@ -85,9 +84,12 @@ describe('connect-jade-static', function() {
       var req = { originalUrl: '/views/blah.html' };
       var res = { end: function(html) {
         throw new Error('Code shouldn\'t reach here');
+      }, send: function(code) {
+        assert.equal(code, 404);
+        done();
       }};
 
-      mw(req, res, done);
+      mw(req, res, next);
     });
 
     it('should ignore requests without an appropriate .jade file', function(done) {
@@ -95,8 +97,11 @@ describe('connect-jade-static', function() {
       var req = { originalUrl: '/views/no_tpl.css' };
       var res = { end: function(html) {
         throw new Error('Code shouldn\'t reach here');
+      }, send: function(code) {
+        assert.equal(code, 404);
+        done();
       }};
-      mw(req, res, done);
+      mw(req, res, next);
     });
 
     it('should raise error if jade template invalid', function(done) {
@@ -105,12 +110,11 @@ describe('connect-jade-static', function() {
       var res = { end: function(html) {
         throw new Error('Code shouldn\'t reach here');
       }};
-      var next = function(err) {
+
+      mw(req, res, function(err) {
         assert.ok(err instanceof TypeError);
         done();
-      };
-
-      mw(req, res, next);
+      });
     });
   });
 
@@ -118,7 +122,7 @@ describe('connect-jade-static', function() {
   describe('getTplPath()', function() {
 
     var baseDir = path.join(__dirname, 'views');
-    var opts = {baseUrl: '/testing', baseDir: baseDir};
+    var opts = {baseUrl: '/testing', baseDir: baseDir, ext: ['.jade']};
 
     var helper = function(url) {
       return cjs.getTplPath({originalUrl: url}, opts)
