@@ -90,6 +90,15 @@ describe('connect-jade-static', function() {
       mw(req, res, done);
     });
 
+    it('should ignore requests without an appropriate .jade file', function(done) {
+      var mw = cjs({ baseUrl: '/views', baseDir: path.join(__dirname, 'views') });
+      var req = { originalUrl: '/views/no_tpl.css' };
+      var res = { end: function(html) {
+        throw new Error('Code shouldn\'t reach here');
+      }};
+      mw(req, res, done);
+    });
+
     it('should raise error if jade template invalid', function(done) {
       var mw = cjs({ baseUrl: '/views', baseDir: path.join(__dirname, 'views') });
       var req = { originalUrl: '/views/tpl_err.html' };
