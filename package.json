@@ -1,6 +1,6 @@
 {
   "name": "connect-jade-static",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Connect (expressjs) middleware for serving html files from jade template",
   "main": "index.js",
   "scripts": {

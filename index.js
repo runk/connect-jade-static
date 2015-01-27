@@ -24,7 +24,7 @@ module.exports = function(opts) {
     var filepath = module.exports.getTplPath(req, opts);
 
     if (!filepath)
-      return res.send(404)
+      return next();
 
     if (filepath.indexOf(opts.baseDir) !== 0)
       return res.send(403);

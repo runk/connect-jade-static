@@ -6,7 +6,7 @@ var assert = require('assert'),
 describe('connect-jade-static', function() {
 
   var next = function(err) {
-    throw new Error('Code shouldn\'t reach here');
+    throw new Error('next() shouldn\'t be called');
   };
 
   describe('middleware()', function() {
@@ -85,11 +85,10 @@ describe('connect-jade-static', function() {
       var res = { end: function(html) {
         throw new Error('Code shouldn\'t reach here');
       }, send: function(code) {
-        assert.equal(code, 404);
-        done();
+        throw new Error('Code shouldn\'t reach here');
       }};
 
-      mw(req, res, next);
+      mw(req, res, done);
     });
 
     it('should ignore requests without an appropriate .jade file', function(done) {
@@ -98,10 +97,9 @@ describe('connect-jade-static', function() {
       var res = { end: function(html) {
         throw new Error('Code shouldn\'t reach here');
       }, send: function(code) {
-        assert.equal(code, 404);
-        done();
+        throw new Error('Code shouldn\'t reach here');
       }};
-      mw(req, res, next);
+      mw(req, res, done);
     });
 
     it('should raise error if jade template invalid', function(done) {
