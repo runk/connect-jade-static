@@ -4,6 +4,17 @@ var path = require('path'),
   url = require('url'),
   assert = require('assert');
 
+var defaultOptions = {
+  // Jade options
+  jade: {},
+  // Serve index.jade if http://someurl/example/ is requested
+  serveIndex: true,
+  // Valid jade template extensions
+  ext: ['.jade'],
+  // Allowed request extension
+  allowedExt: ['.jade', '.htm', '.html']
+};
+
 module.exports = function(opts) {
 
   if (!opts.baseDir)
@@ -12,16 +23,14 @@ module.exports = function(opts) {
   if (!opts.baseUrl)
     throw new Error('baseUrl should be set');
 
-  opts.jade = opts.jade || {};
-
-  opts.ext = opts.ext || ['.jade'];
+  opts = module.exports.getDefaultOptions(opts);
 
   return function(req, res, next) {
 
     if (req.originalUrl.indexOf(opts.baseUrl) !== 0)
       return next();
 
-    var filepath = module.exports.getTplPath(req, opts);
+    var filepath = module.exports.getTplPath(req.originalUrl, opts);
 
     if (!filepath)
       return next();
@@ -49,25 +58,45 @@ module.exports = function(opts) {
 
 };
 
+module.exports.getDefaultOptions = function (opts) {
+  opts = opts || {};
+  Object.keys(defaultOptions).forEach(function (optionName) {
+    if (opts[optionName] === undefined) {
+      opts[optionName] = defaultOptions[optionName];
+    }
+  });
+  return opts;
+};
 
-module.exports.getTplPath = function(req, opts) {
+
+module.exports.getTplPath = function(requestUrl, opts) {
+  opts = module.exports.getDefaultOptions(opts);
   assert(opts.ext && Array.isArray(opts.ext), 'opts.ext should be provided and be an array');
   assert(opts.baseDir, 'opts.baseDir should be provided');
 
-  var parsed = url.parse(req.originalUrl);
+  var parsed = url.parse(requestUrl);
   var pathname = parsed.pathname.replace(opts.baseUrl, '');
 
+  if (opts.serveIndex && pathname.substr(-1) === '/') {
+    pathname += 'index' + opts.allowedExt[0];
+  }
+
+  var requestedExt = path.extname(pathname);
+  var requestedFilename = pathname.substr(0, pathname.length - requestedExt.length);
+
+  // Allow only .html .htm .jade ...
+  if (opts.allowedExt.indexOf(requestedExt) === -1) {
+    return null;
+  }
+
+  // Search for an existing template file
   for (var i = 0; i < opts.ext.length; i++) {
     var ext = opts.ext[i];
-    var filepath = path.join(opts.baseDir, pathname.replace(/\.html$/, ext));
-
-    // make sure that regexp replace worked from line above
-    if (path.extname(filepath) != ext)
-      continue;
-
-    // make sure that file exists
-    if (fs.existsSync(filepath))
+    var filepath = path.join(opts.baseDir, requestedFilename + ext);
+    if (fs.existsSync(filepath)) {
       return filepath;
-  };
+    }
+  }
+
   return null;
 };
