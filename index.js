@@ -76,13 +76,18 @@ module.exports.getTplPath = function(requestUrl, opts) {
 
   var parsed = url.parse(requestUrl);
   var pathname = parsed.pathname.replace(opts.baseUrl, '');
-
-  if (opts.serveIndex && pathname.substr(-1) === '/') {
-    pathname += 'index' + opts.allowedExt[0];
-  }
-
   var requestedExt = path.extname(pathname);
-  var requestedFilename = pathname.substr(0, pathname.length - requestedExt.length);
+  var pathnameWithoutExt = pathname.substr(0, pathname.length - requestedExt.length);
+
+  if (opts.serveIndex && requestedExt === '') {
+    // Handle http://example.com/example-path
+    if(pathname.substr(-1) !== '/') {
+      pathnameWithoutExt += '/';
+    }
+    // Handle http://example.com/example-path/
+    pathnameWithoutExt += 'index';
+    requestedExt = opts.allowedExt[0];
+  }
 
   // Allow only .html .htm .jade ...
   if (opts.allowedExt.indexOf(requestedExt) === -1) {
@@ -92,7 +97,7 @@ module.exports.getTplPath = function(requestUrl, opts) {
   // Search for an existing template file
   for (var i = 0; i < opts.ext.length; i++) {
     var ext = opts.ext[i];
-    var filepath = path.join(opts.baseDir, requestedFilename + ext);
+    var filepath = path.join(opts.baseDir, pathnameWithoutExt + ext);
     if (fs.existsSync(filepath)) {
       return filepath;
     }

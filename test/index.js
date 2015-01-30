@@ -186,6 +186,14 @@ describe('connect-jade-static', function() {
       assert.equal(helper('/testing/foo/'), baseDir + '/foo/index.jade');
     });
 
+    it('should return index.jade for root', function () {
+      assert.equal(cjs.getTplPath('/', {baseUrl: '/', baseDir: baseDir + '/foo'}), baseDir + '/foo/index.jade');
+    });
+
+    it('should return index.jade for a directory whithout trailing slash', function () {
+      assert.equal(helper('/testing/foo'), baseDir + '/foo/index.jade');
+    });
+
     it('should not return index.jade for a directory if disabled', function () {
       assert.equal(cjs.getTplPath('/testing/foo/', {baseUrl: '/testing', baseDir: baseDir, serveIndex: false}), null);
     });
