@@ -49,6 +49,30 @@ describe('connect-jade-static', function() {
       mw(req, res, next);
     });
 
+    it('should serve index file', function (done) {
+      var mw = cjs({ baseUrl: '/views', baseDir: path.join(__dirname, 'views') });
+      var headers = {};
+      var req = { originalUrl: '/views/foo/' };
+      var res = {
+        end: function (html) {
+          // otherwise jade tries to catch this error :/
+          process.nextTick(function () {
+            assert.equal(html, '<h1>index</h1>');
+            assert.deepEqual(headers, {
+              'Content-Length': 14,
+              'Content-Type': 'text/html; charset=utf-8'
+            });
+            done();
+          });
+        },
+        setHeader: function (k, v) {
+          headers[k] = v;
+        }
+      };
+
+      mw(req, res, next);
+    });
+
     it('should support jade options', function(done) {
       var mw = cjs({ baseUrl: '/views', baseDir: path.join(__dirname, 'views'), jade: { pretty: true } });
       var headers = {};
@@ -120,14 +144,33 @@ describe('connect-jade-static', function() {
   describe('getTplPath()', function() {
 
     var baseDir = path.join(__dirname, 'views');
-    var opts = {baseUrl: '/testing', baseDir: baseDir, ext: ['.jade']};
+    var opts = {baseUrl: '/testing', baseDir: baseDir, ext: ['.jade'], allowedExt: ['.html', '.htm'], serveIndex: true};
+    var minimalOpts = {baseUrl: '/testing', baseDir: baseDir};
 
     var helper = function(url) {
-      return cjs.getTplPath({originalUrl: url}, opts)
+      return cjs.getTplPath(url, opts);
     };
 
     it('should work fine with basic path', function() {
       assert.equal(helper('/testing/foo/bar.html'), baseDir + '/foo/bar.jade');
+    });
+
+    it('should allow all allowed extensions', function() {
+      assert.equal(helper('/testing/foo/bar.htm'), baseDir + '/foo/bar.jade');
+      assert.equal(helper('/testing/foo/bar.html'), baseDir + '/foo/bar.jade');
+    });
+
+    it('should reject not allowed extensions', function () {
+      assert.equal(helper('/testing/foo/bar.docx'), null);
+    });
+
+    it('should allow all allowed extensions with minimal options', function() {
+      assert.equal(cjs.getTplPath('/testing/foo/bar.htm', minimalOpts), baseDir + '/foo/bar.jade');
+      assert.equal(cjs.getTplPath('/testing/foo/bar.html', minimalOpts), baseDir + '/foo/bar.jade');
+    });
+
+    it('should reject not allowed extensions with minimal options', function () {
+      assert.equal(cjs.getTplPath('/testing/foo/bar.docx', minimalOpts), null);
     });
 
     it('should work fine with path with params', function() {
@@ -135,8 +178,24 @@ describe('connect-jade-static', function() {
       assert.equal(helper('/testing/foo/baz.html?kraken-here'), baseDir + '/foo/baz.jade');
     });
 
-    it('should work fine with path with search hash', function() {
+    it('should work fine with path with search hash', function () {
       assert.equal(helper('/testing/foo/baz.html#menu'), baseDir + '/foo/baz.jade');
+    });
+
+    it('should return index.jade for a directory', function () {
+      assert.equal(helper('/testing/foo/'), baseDir + '/foo/index.jade');
+    });
+
+    it('should return index.jade for root', function () {
+      assert.equal(cjs.getTplPath('/', {baseUrl: '/', baseDir: baseDir + '/foo'}), baseDir + '/foo/index.jade');
+    });
+
+    it('should return index.jade for a directory whithout trailing slash', function () {
+      assert.equal(helper('/testing/foo'), baseDir + '/foo/index.jade');
+    });
+
+    it('should not return index.jade for a directory if disabled', function () {
+      assert.equal(cjs.getTplPath('/testing/foo/', {baseUrl: '/testing', baseDir: baseDir, serveIndex: false}), null);
     });
   });
 

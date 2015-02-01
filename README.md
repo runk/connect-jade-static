@@ -30,7 +30,7 @@ Let's make jade files from `/views/partials` web accessable:
         jade: { pretty: true }
       }));
     });
-    
+
 #### Express 4.0
 
 
@@ -43,7 +43,7 @@ Let's make jade files from `/views/partials` web accessable:
       jade: { pretty: true }
     }));
 
-Now, if you start your web server and request `/views/partials/file.html` in browser you
+Now, if you start your web server and request `/partials/file.html` in browser you
 should be able see the compiled jade template.
 
 -------------
