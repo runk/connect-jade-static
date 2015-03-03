@@ -34,10 +34,8 @@ describe('connect-jade-static', function() {
           // otherwise jade tries to catch this error :/
           process.nextTick(function() {
             assert.equal(html, '<h1>Hello</h1><ul><li>aaa</li><li>bbb</li><li>ccc</li></ul>');
-            assert.deepEqual(headers, {
-              'Content-Length': 59,
-              'Content-Type': 'text/html; charset=utf-8'
-            });
+            assert.equal(headers['Content-Length'], 59);
+            assert.equal(headers['Content-Type'], 'text/html; charset=utf-8');
             done();
           });
         },
@@ -58,10 +56,8 @@ describe('connect-jade-static', function() {
           // otherwise jade tries to catch this error :/
           process.nextTick(function () {
             assert.equal(html, '<h1>index</h1>');
-            assert.deepEqual(headers, {
-              'Content-Length': 14,
-              'Content-Type': 'text/html; charset=utf-8'
-            });
+            assert.equal(headers['Content-Length'], 14);
+            assert.equal(headers['Content-Type'], 'text/html; charset=utf-8');
             done();
           });
         },
@@ -88,10 +84,8 @@ describe('connect-jade-static', function() {
               '  <li>bbb</li>\n' +
               '  <li>ccc</li>\n' +
               '</ul>');
-            assert.deepEqual(headers, {
-              'Content-Length': 71,
-              'Content-Type': 'text/html; charset=utf-8'
-            });
+            assert.equal(headers['Content-Length'], 71);
+            assert.equal(headers['Content-Type'], 'text/html; charset=utf-8');
             done();
           });
         },
@@ -137,6 +131,31 @@ describe('connect-jade-static', function() {
         assert.ok(err instanceof TypeError);
         done();
       });
+    });
+    it('should honor the maxAge option', function(done) {
+      var mw = cjs({
+        baseUrl: '/views',
+        baseDir: path.join(__dirname, 'views'),
+        maxAge: 5432
+      });
+      var exp = new Date((+new Date()) + 5432).toGMTString();
+      var headers = {};
+      var req = { originalUrl: '/views/tpl.html' };
+      var res = {
+        end: function(html) {
+          // otherwise jade tries to catch this error :/
+          process.nextTick(function() {
+            assert.equal(headers['Cache-Control'], 'max-age=5432');
+            assert.equal(headers.Expires, exp);
+            done();
+          });
+        },
+        setHeader: function(k, v) {
+          headers[k] = v;
+        }
+      };
+
+      mw(req, res, next);
     });
   });
 

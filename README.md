@@ -27,6 +27,7 @@ Let's make jade files from `/views/partials` web accessable:
       app.use(jadeStatic({
         baseDir: path.join(__dirname, '/views/partials'),
         baseUrl: '/partials',
+        maxAge: 86400,
         jade: { pretty: true }
       }));
     });
@@ -40,6 +41,7 @@ Let's make jade files from `/views/partials` web accessable:
     app.use(jadeStatic({
       baseDir: path.join(__dirname, '/views/partials'),
       baseUrl: '/partials',
+      maxAge: 86400,
       jade: { pretty: true }
     }));
 
