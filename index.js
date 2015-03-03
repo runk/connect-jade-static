@@ -12,7 +12,9 @@ var defaultOptions = {
   // Valid jade template extensions
   ext: ['.jade'],
   // Allowed request extension
-  allowedExt: ['.jade', '.htm', '.html']
+  allowedExt: ['.jade', '.htm', '.html'],
+  // Header for Cache-Control: max-age=0
+  maxAge: 0
 };
 
 module.exports = function(opts) {
@@ -51,6 +53,10 @@ module.exports = function(opts) {
 
         res.setHeader('Content-Length', Buffer.byteLength(html));
         res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        var now = +new Date();
+        var expires = new Date(now + opts.maxAge);
+        res.setHeader('Cache-Control', 'max-age=' + opts.maxAge);
+        res.setHeader('Expires', expires.toGMTString());
         return res.end(html);
       });
     });
