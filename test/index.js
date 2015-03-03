@@ -34,10 +34,8 @@ describe('connect-jade-static', function() {
           // otherwise jade tries to catch this error :/
           process.nextTick(function() {
             assert.equal(html, '<h1>Hello</h1><ul><li>aaa</li><li>bbb</li><li>ccc</li></ul>');
-            assert.deepEqual(headers, {
-              'Content-Length': 59,
-              'Content-Type': 'text/html; charset=utf-8'
-            });
+            assert.equal(headers['Content-Length'], 59);
+            assert.equal(headers['Content-Type'], 'text/html; charset=utf-8');
             done();
           });
         },
@@ -58,10 +56,8 @@ describe('connect-jade-static', function() {
           // otherwise jade tries to catch this error :/
           process.nextTick(function () {
             assert.equal(html, '<h1>index</h1>');
-            assert.deepEqual(headers, {
-              'Content-Length': 14,
-              'Content-Type': 'text/html; charset=utf-8'
-            });
+            assert.equal(headers['Content-Length'], 14);
+            assert.equal(headers['Content-Type'], 'text/html; charset=utf-8');
             done();
           });
         },
