@@ -37,7 +37,7 @@ module.exports = function(opts) {
     if (!filepath)
       return next();
 
-    if (filepath.indexOf(opts.baseDir) !== 0)
+    if (path.relative(opts.baseDir, filepath)[0] === '.')
       return res.sendStatus(403);
 
     fs.stat(filepath, function(err, stats) {
